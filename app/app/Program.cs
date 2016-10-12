@@ -20,6 +20,7 @@ namespace app
 
             var cache = new LRUStringCache(capacity: 5);
             var server = new Server(cache);
+            tcpServer.Start();
 
             while (true)
             {

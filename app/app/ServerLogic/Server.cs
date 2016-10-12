@@ -46,15 +46,11 @@ namespace app.ServerLogic
                     if (line != null)
                     {
                         Commands command;
-                        byte[] response = null;
+                        byte[] response = Response(Status.Fail);
                         if (Enum.TryParse(line, false, out command))
                         {
                             var key = await reader.ReadLineAsync();
-                            if (string.IsNullOrEmpty(key))
-                            {
-                                response = Response(Status.Fail);
-                            }
-                            else
+                            if (!string.IsNullOrEmpty(key))
                             {
                                 switch (command)
                                 {
@@ -71,6 +67,7 @@ namespace app.ServerLogic
                                         {
                                             var put = new Put(key: key, value: value);
                                             await Handle(put);
+                                            response = Response(Status.Ok);
                                         }
                                         break;
                                     default:
@@ -79,8 +76,8 @@ namespace app.ServerLogic
                                         break;
                                 }
                             }
-                            stream.Write(response, 0, response.Length);
                         }
+                        stream.Write(response, 0, response.Length);
                     }
                 } while (line != null);
             }
